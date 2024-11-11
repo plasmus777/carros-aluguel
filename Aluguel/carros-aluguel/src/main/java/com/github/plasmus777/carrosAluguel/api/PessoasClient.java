@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient("carrosAluguelPessoas")
 public interface PessoasClient {
-    @GetMapping("/api/v1/pessoas")
+    @GetMapping("api/v1/pessoas")
     ResponseEntity<Pessoa> buscarPessoaPorCpf(@CPF @RequestParam String cpf);
 
-    @PostMapping("/api/v1/pessoas")
+    @PostMapping("api/v1/pessoas")
     ResponseEntity<Pessoa> criarPessoa(@Valid @RequestBody Pessoa pessoa);
 }

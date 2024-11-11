@@ -26,7 +26,7 @@ public class PessoaController {
     @GetMapping
     public ResponseEntity<Pessoa> buscarPessoaPorCpf(@CPF @RequestParam String cpf){
         Optional<Pessoa> pessoaOpt = buscarPessoaService.buscarPessoa(cpf);
-        return pessoaOpt.map(valor -> ResponseEntity.status(HttpStatus.FOUND).body(valor))
+        return pessoaOpt.map(valor -> ResponseEntity.status(HttpStatus.OK).body(valor))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 

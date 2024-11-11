@@ -2,6 +2,7 @@ package com.github.plasmus777.carrosAluguel;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
@@ -53,8 +54,9 @@ Criar endpoint para finalizar um aluguel
 * */
 
 @SpringBootApplication
-@EnableFeignClients
+@EnableFeignClients(basePackages = "com.github.plasmus777.carrosAluguel.api")
 @EnableEurekaServer
+@EnableDiscoveryClient
 public class CarrosAluguelApplication {
 
 	public static void main(String[] args) {

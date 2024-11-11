@@ -27,7 +27,7 @@ public class VeiculoController {
     @GetMapping
     public ResponseEntity<Veiculo> buscarVeiculoPorNumeroIdentificacao(@RequestParam String numeroIdentificacao){
         Optional<Veiculo> veiculoOpt = buscarVeiculoService.buscarVeiculoPorNumeroIdentificacao(numeroIdentificacao);
-        return veiculoOpt.map(valor -> ResponseEntity.status(HttpStatus.FOUND).body(valor))
+        return veiculoOpt.map(valor -> ResponseEntity.status(HttpStatus.OK).body(valor))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 

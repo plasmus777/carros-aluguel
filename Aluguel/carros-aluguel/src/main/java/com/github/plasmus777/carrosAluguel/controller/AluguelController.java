@@ -1,6 +1,7 @@
 package com.github.plasmus777.carrosAluguel.controller;
 
 import com.github.plasmus777.carrosAluguel.model.Aluguel;
+import com.github.plasmus777.carrosAluguel.service.BuscarAluguelService;
 import com.github.plasmus777.carrosAluguel.service.CriarAluguelService;
 import com.github.plasmus777.carrosAluguel.service.FinalizarAluguelService;
 import jakarta.validation.Valid;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -15,10 +17,12 @@ import java.util.Optional;
 public class AluguelController {
     private final CriarAluguelService criarAluguelService;
     private final FinalizarAluguelService finalizarAluguelService;
+    private final BuscarAluguelService buscarAluguelService;
 
-    public AluguelController(CriarAluguelService criarAluguelService, FinalizarAluguelService finalizarAluguelService){
+    public AluguelController(CriarAluguelService criarAluguelService, FinalizarAluguelService finalizarAluguelService, BuscarAluguelService buscarAluguelService){
         this.criarAluguelService = criarAluguelService;
         this.finalizarAluguelService = finalizarAluguelService;
+        this.buscarAluguelService = buscarAluguelService;
     }
 
     @PostMapping("/criar")
@@ -39,5 +43,13 @@ public class AluguelController {
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro interno ao finalizar o aluguel.");
         }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Aluguel>> buscarAlugueis(){
+        List<Aluguel> aluguelLista = buscarAluguelService.buscarAlugueis();
+
+        if(aluguelLista.isEmpty()) return ResponseEntity.status(HttpStatus.NO_CONTENT).body(aluguelLista);
+        else return ResponseEntity.status(HttpStatus.OK).body(aluguelLista);
     }
 }

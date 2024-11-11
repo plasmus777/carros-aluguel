@@ -5,12 +5,15 @@ import com.github.plasmus777.carrosAluguel.api.VeiculosClient;
 import com.github.plasmus777.carrosAluguel.model.Aluguel;
 import com.github.plasmus777.carrosAluguel.model.Pessoa;
 import com.github.plasmus777.carrosAluguel.model.Veiculo;
+import com.github.plasmus777.carrosAluguel.model.builder.AluguelConstrutor;
 import com.github.plasmus777.carrosAluguel.repository.AluguelRepository;
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -41,17 +44,25 @@ public class CriarAluguelService {
                 throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Não há veículos disponíveis para o aluguel.");
             }
 
-            Aluguel aluguel = new Aluguel();
-            aluguel.setCpfPessoa(pessoa.getCpf());
-            aluguel.setDataInicio(LocalDateTime.now().toLocalDate());
-            aluguel.setDataPrevistaConclusao(LocalDateTime.now().toLocalDate().plusMonths(1));
-            aluguel.setNomePessoa(pessoa.getNome());
-            aluguel.setNumeroIdentificacao(veiculo.getNumeroIdentificacao());
+            Aluguel aluguel = new AluguelConstrutor()
+                    .definirCpfPessoa(pessoa.getCpf())
+                    .definirDataInicio(LocalDateTime.now().toLocalDate())
+                    .definirDataPrevistaConclusao(LocalDateTime.now().toLocalDate().plusMonths(1))
+                    .definirNomePessoa(pessoa.getNome())
+                    .definirNumeroIdentificacao(veiculo.getNumeroIdentificacao())
+                    .construir();
 
             veiculosClient.alterarQuantidadeDeVeiculosDisponiveis(veiculo.getModelo(), veiculo.getEstoque().getQuantidadeDisponivel() - 1);
 
             return Optional.of(aluguelRepository.save(aluguel));
+        } catch (FeignException.NotFound e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pessoa ou veículo não encontrado.");
+        } catch (FeignException e) {
+            System.out.println("Erro de Feign: " + e.status() + " " + e.getMessage());
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Ocorreu um erro ao tentar se comunicar com os outros serviços externos.");
         } catch (Exception e){
+            System.out.println(Arrays.toString(e.getStackTrace()));
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Ocorreu um erro ao registrar o aluguel.");
         }
     }

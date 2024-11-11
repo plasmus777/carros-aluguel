@@ -18,8 +18,7 @@ import java.time.Period;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class Aluguel {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull(message = "O id não pode estar vazio!")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @CPF(message = "O CPF da pessoa deve ser válido!")
